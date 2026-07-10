@@ -1,5 +1,6 @@
 package com.jobboard.demo.controller;
 
+import com.jobboard.demo.model.JobResponse;
 import com.jobboard.demo.service.JobService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class JobController {
     private JobService jobService;
 
     @GetMapping("getAllJobs")
-    public List<Job> getAllJobs(){
+    public List<JobResponse> getAllJobs(){
        return jobService.findAllJobs();
     }
 

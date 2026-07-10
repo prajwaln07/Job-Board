@@ -1,11 +1,13 @@
 package com.jobboard.demo.service;
 
+import com.jobboard.demo.model.JobResponse;
 import com.jobboard.demo.repository.JobRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.jobboard.demo.model.Job;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -14,17 +16,21 @@ public class JobService {
     @Autowired
     private JobRepository jobRepository;
 
-    public List<Job> findAllJobs(){
-        return jobRepository.findAll();
+    public List<JobResponse> findAllJobs(){
+        return jobRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
-    public Job createJob(Job job){
-        return jobRepository.save(job);
+    public JobResponse createJob(Job job){
+        return toResponse(jobRepository.save(job));
     }
 
     public Job getJobById(Long id){
         return jobRepository.findById(id).orElseThrow(()->
             new RuntimeException("Job not found with id : " + id)
         );
+
     }
 
     public Job updateJob(Long id,@NonNull Job updatedJob){
@@ -39,6 +45,16 @@ public class JobService {
 
     public void deleteJob(Long id){
         jobRepository.deleteById(id);
+    }
+
+    private JobResponse toResponse(Job job) {
+        return new JobResponse(
+                job.getId(),
+                job.getTitle(),
+                job.getLocation(),
+                job.getSalary(),
+                job.getDescription()
+        );
     }
 
 }
